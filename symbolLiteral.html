@@ -8,5 +8,22 @@
 		<script type="text/javascript" src="symbolLiterals.js"></script>
 	</head>
 	<body>
+		<div>Current working</div>
+		<textarea id="scripts" rows="10" cols="80">
+2
+-1
+var c; c = #HelloWorld;
+str = "helloWorld";
+str = '#notASymbol';
+var str = '';\nvar num = 123;
+str = "";
+str = 'not\'a#Symbol';
+str = 123; //#ignore this
+#HelloWorld;
+</textarea>
+
+		<input type="button" name="transpile" value="transpile" onclick="document.getElementById('results').value=main(document.getElementById('scripts').value);">
+
+		<textarea id="results" rows="10" cols="80"></textarea>
 	</body>
 </html>

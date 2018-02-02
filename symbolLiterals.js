@@ -1,7 +1,6 @@
-//With thanks to Jack W. Crenshaw
-//https://compilers.iecc.com/crenshaw/
-//
 // transpile javascript containing symbol literals, #mySymbolName, to valid javascript => Symbol.for('mySymbolName')
+// USE: main(scriptText);
+//  
 
 var stream;
 var streamPos;
@@ -13,12 +12,12 @@ var EOF = false;
 var QUOTES = "'\"";
 
 function read(){
-  if (streamPos <= stream.length) {
+  if (streamPos < stream.length) {
     look = stream[streamPos];
     streamPos = streamPos + 1;
-    if (streamPos > stream.length) {
-      EOF = true;
-    }
+  } else {
+    EOF = true;
+    look = "";
   }
 }
 
@@ -40,13 +39,13 @@ function expected(s){
 }
 
 function match(c){
-  if (look = c) getChar();
+  if (look == c) getChar();
   else expected("'" + c + "'");
 }
 
 function matchOne(c){
   for (var i=0; i<c.length; i++){
-    if (look = c[i]) {
+    if (look == c[i]) {
       getChar();
       return c[i];
     }
@@ -89,7 +88,7 @@ function getSymbolLiteral(){
 function getStringLiteral(){
   var s;
   s = matchOne(QUOTES);
-  while (look != s[0]) {
+  while (look != s[0] && !EOF) {
     s = s + look;
     if (look=="\\") {
       getChar();
@@ -134,18 +133,26 @@ function replaceSymbolLiterals(){
   }
 }
 
-//test suite
 
-//current ok
-main("");
-main("2");
-main("-1");
-main("var c; c = #HelloWorld");
-main("str = 'helloWorld';");
-main("str = '#notASymbol';");
- main("var str = '';\nvar num = 123;")
 
-//current fails - NEED TO PASS IN FILE AS TEXT - NOT POST EVALUATED AS HERE...
-// main("str = 'not\'a#Symbol';");
-// main("str = 123; //#ignore this");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
