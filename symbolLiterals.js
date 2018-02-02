@@ -91,6 +91,10 @@ function getStringLiteral(){
   s = matchOne(QUOTES);
   while (look != s[0]) {
     s = s + look;
+    if (look=="\\") {
+      getChar();
+      s = s + look;
+    }
     getChar();
   }
   s = s + look;
@@ -139,8 +143,9 @@ main("-1");
 main("var c; c = #HelloWorld");
 main("str = 'helloWorld';");
 main("str = '#notASymbol';");
+ main("var str = '';\nvar num = 123;")
 
-//current fails
+//current fails - NEED TO PASS IN FILE AS TEXT - NOT POST EVALUATED AS HERE...
 // main("str = 'not\'a#Symbol';");
 // main("str = 123; //#ignore this");
 
