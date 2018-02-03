@@ -1,18 +1,17 @@
 // transpile javascript containing symbol literals, #mySymbolName, to valid javascript => Symbol.for('mySymbolName')
-// USE: main(scriptText);
+// USE: main(scriptText); returns valid javascript
 //  
 
 var stream;
 var streamPos;
 var result = "";
 var look;
-
 var EOF = false;
-var CR = "\r";
 
-var QUOTES = "'\"";
-var COMMENT = "/";
-var COMMENT = "/*";
+var CR = "\r";
+var LF = "\n";
+var QUOTES = "\'"+'\"';
+var STRINGESCAPE = "\\";
 
 function read(){
   if (streamPos < stream.length) {
@@ -21,6 +20,9 @@ function read(){
   } else {
     EOF = true;
     look = "";
+  }
+  if (streamPos == 146493){
+    look = look;
   }
 }
 
@@ -34,6 +36,7 @@ function error(s){
 
 function abort(s){ 
   error(s);
+  console.log("ERROR at char "+(streamPos-1));
   throw new Error(s);
 }
 
@@ -57,11 +60,13 @@ function matchOne(c){
 }
 
 function isAlpha(c){
-  return ~"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(c);
+  var charCode = c.charCodeAt(0);
+  return (charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123);
 }
 
 function isDigit(c){
-  return ~"1234567890".indexOf(c);
+  var charCode = c.charCodeAt(0);
+  return (charCode > 47 && charCode < 58);
 }
 
 function isAlNum(c) {
@@ -84,6 +89,14 @@ function isMultiLineComment(c){ //cheeky lookahead
   return (c == "/") && ("*" == stream[streamPos]);
 }
 
+function isEndOfLine(c){
+  return (c == CR) || (c == LF);
+}
+
+function getRegularExpressionLiteral(){
+
+}
+
 function getSymbolLiteral(){
   var ret = '';
   match('#');
@@ -96,16 +109,16 @@ function getSymbolLiteral(){
 }
 
 function getStringLiteral(){
-  var ret;
-  ret = matchOne(QUOTES);
-  while (look != ret[0] && !EOF) {    //EOF check required for scripts with a lonely quote
+  var ret = matchOne(QUOTES);
+  while (look != ret[0] && !EOF && !isEndOfLine(look)) {    //EOF check required for scripts with a lonely quote
     ret += look;
-    if (look=="\\") {
+    if (look == STRINGESCAPE) {   //skip next char as well
       getChar();
       ret += look;
     }
     getChar();
   }
+  if (isEndOfLine(look)) console.log("String Literal Error: End of line before string terminator")
   ret += look;
   getChar();
   return ret;
@@ -117,7 +130,7 @@ function getMultiLineComment(){
     do {
       ret += look;
       getChar();
-    } while (look != '*' && !EOF);
+    } while (look != '*' && !EOF);    //EOF check required for scripts with unterminated comment
     ret += look;
     getChar();
   } while (look != '/' && !EOF);
@@ -128,7 +141,7 @@ function getMultiLineComment(){
 
 function getSingleLineComment(){
   var ret = '';
-  while (look != CR && !EOF) {
+  while (!isEndOfLine(look) && !EOF) {    //EOF check required for scripts with comment on last line
     ret += look;
     getChar();
   }
@@ -147,23 +160,17 @@ function init(){
   getChar();
 }
 
-function main(parseStr){
-  stream = parseStr;
-  streamPos = 0;
-  init();
-  while (!EOF){
-    replaceSymbolLiterals();
-  }
-  console.log(result);
-  return result;
-}
-
 function replaceSymbolLiterals(){
+  if (look=="#"){
+    look == look;
+  }
   switch (true) {
     case isSingleLineComment(look):
+console.log("single comment");
       emit( getSingleLineComment() );
       break;
     case isMultiLineComment(look):
+console.log("multi comment");
       emit( getMultiLineComment() );
       break;
     case isQuote(look):
@@ -178,26 +185,12 @@ function replaceSymbolLiterals(){
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function main(parseStr){
+  stream = parseStr;
+  streamPos = 0;
+  init();
+  while (!EOF){
+    replaceSymbolLiterals();
+  }
+  return result;
+}

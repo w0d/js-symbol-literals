@@ -8,24 +8,26 @@
 		<script type="text/javascript" src="symbolLiterals.js"></script>
 	</head>
 	<body>
-		<div>Current working</div>
+		<div>Javascript with string literals</div>
 		<textarea id="scripts" rows="10" cols="80">
 2
--1
+// stream[streamPos]
 var c; c = #HelloWorld;
 str = "helloWorld";
 str = '#notASymbol';
-var str = '';\nvar num = 123;
+var str = 'http://www.abc.123 //not comment';var symb = #aSymbol;
+var str = 'http://www.abc.123 //not comment'//;var symb = #notASymbol;
 str = "";
-str = 'not\'a#Symbol';
-str = 123; //#ignore this
+str = 'not\'a#notASymbol';
+str = 123; //ignore #notASymbol ppls
 #HelloWorld;
 /* this is a "comment" #notASymbol 
  this is aanother "com #notASymbol  ment" 
+return n&&(r=r+", #"+n.replace(/\s+/g,", #")) 
  */
 </textarea>
 
-		<input type="button" name="transpile" value="transpile" onclick="document.getElementById('results').value=main(document.getElementById('scripts').value);">
+		<input type="button" name="transpile" value="transpile" onclick="var textScript = document.getElementById('scripts').value;console.time('symbolLiterals');var result = main(textScript);console.timeEnd('symbolLiterals');document.getElementById('results').value=result;console.log('NB: input===output is '+(textScript===result));">
 
 		<textarea id="results" rows="10" cols="80"></textarea>
 	</body>
