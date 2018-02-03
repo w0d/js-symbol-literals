@@ -4,12 +4,15 @@
 
 var stream;
 var streamPos;
+var result = "";
 var look;
 
-var result = "";
 var EOF = false;
+var CR = "\r";
 
 var QUOTES = "'\"";
+var COMMENT = "/";
+var COMMENT = "/*";
 
 function read(){
   if (streamPos < stream.length) {
@@ -66,39 +69,72 @@ function isAlNum(c) {
 }
 
 function isQuote(c){
-   return ~'\'"'.indexOf(c);
+  return "'" == c || '"' == c;
 }
 
 function isHash(c){
-   return c == "#";
+  return c == "#";
+}
+
+function isSingleLineComment(c){ //cheeky lookahead
+  return (c == "/") && ("/" == stream[streamPos]);
+}
+
+function isMultiLineComment(c){ //cheeky lookahead
+  return (c == "/") && ("*" == stream[streamPos]);
 }
 
 function getSymbolLiteral(){
-  var s = '';
+  var ret = '';
   match('#');
-  if (!isAlpha(look)) expected('Symbol literal');
+  if (!isAlpha(look)) expected('Symbol literal name');
   while (isAlNum(look)) {
-    s = s + look;
+    ret += look;
     getChar();
   }
-  return s;
+  return ret;
 }
 
-//**2DO   handle \' & \"
 function getStringLiteral(){
-  var s;
-  s = matchOne(QUOTES);
-  while (look != s[0] && !EOF) {
-    s = s + look;
+  var ret;
+  ret = matchOne(QUOTES);
+  while (look != ret[0] && !EOF) {    //EOF check required for scripts with a lonely quote
+    ret += look;
     if (look=="\\") {
       getChar();
-      s = s + look;
+      ret += look;
     }
     getChar();
   }
-  s = s + look;
+  ret += look;
   getChar();
-  return s;
+  return ret;
+}
+
+function getMultiLineComment(){
+  var ret = '';
+  do {
+    do {
+      ret += look;
+      getChar();
+    } while (look != '*' && !EOF);
+    ret += look;
+    getChar();
+  } while (look != '/' && !EOF);
+  ret += look;
+  getChar();
+  return ret;
+}
+
+function getSingleLineComment(){
+  var ret = '';
+  while (look != CR && !EOF) {
+    ret += look;
+    getChar();
+  }
+  ret += look;
+  getChar();
+  return ret;
 }
 
 function emit(s){
@@ -112,8 +148,8 @@ function init(){
 }
 
 function main(parseStr){
-  streamPos = 0;
   stream = parseStr;
+  streamPos = 0;
   init();
   while (!EOF){
     replaceSymbolLiterals();
@@ -123,13 +159,22 @@ function main(parseStr){
 }
 
 function replaceSymbolLiterals(){
-  if (isQuote(look)){
-    emit( getStringLiteral() );
-  } else if (isHash(look)) {
-    emit( "Symbol.for('"+getSymbolLiteral()+"')" );
-  } else {
-    emit( look );
-    getChar();
+  switch (true) {
+    case isSingleLineComment(look):
+      emit( getSingleLineComment() );
+      break;
+    case isMultiLineComment(look):
+      emit( getMultiLineComment() );
+      break;
+    case isQuote(look):
+      emit( getStringLiteral() );
+      break;
+    case isHash(look):
+      emit( "Symbol.for('"+getSymbolLiteral()+"')" );
+      break;
+    default:
+      emit( look );
+      getChar();
   }
 }
 
