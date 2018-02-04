@@ -9,9 +9,14 @@
 	</head>
 	<body>
 		<div>Javascript with string literals</div>
-		<textarea id="scripts" rows="10" cols="80">
+		<textarea id="scripts" rows="20" cols="80">
 2
 // stream[streamPos]
+var x = /\//g; v = #aSymbol;
+/*/ hello */ #symb;
+var x = /a\/*/g; var y = #aSymbol; var z = 2;
+var v = y / z;
+/\//g;
 var c; c = #HelloWorld;
 str = "helloWorld";
 str = '#notASymbol';
@@ -29,6 +34,6 @@ return n&&(r=r+", #"+n.replace(/\s+/g,", #"))
 
 		<input type="button" name="transpile" value="transpile" onclick="var textScript = document.getElementById('scripts').value;console.time('symbolLiterals');var result = main(textScript);console.timeEnd('symbolLiterals');document.getElementById('results').value=result;console.log('NB: input===output is '+(textScript===result));">
 
-		<textarea id="results" rows="10" cols="80"></textarea>
+		<textarea id="results" rows="20" cols="80"></textarea>
 	</body>
 </html>
