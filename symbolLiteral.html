@@ -6,17 +6,32 @@
 		<meta name="description" content="Symbol Literals for Javascript">
 		<meta name="author" content="w0d">
 		<script type="text/javascript" src="symbolLiterals.js"></script>
+		<script type="text/javascript">
+			function processJavascript(){
+				var textScript = document.getElementById('source').value;
+				console.time('symbolLiterals');
+				var result = main(textScript);
+				console.timeEnd('symbolLiterals');
+				document.getElementById('results').value=result;
+				console.log('NB: input===output is '+(textScript===result));
+			}
+			function setTextareaSelection(startPos, endPos){
+				var txtarea = document.getElementById('source');
+				txtarea.focus();
+				txtarea.setSelectionRange(startPos, endPos);
+			}
+		</script>
 	</head>
 	<body>
 		<div>Javascript with string literals</div>
-		<textarea id="scripts" rows="20" cols="80">
+		<textarea id="source" rows="20" cols="80">
 2
 // stream[streamPos]
 var x = /\//g; v = #aSymbol;
 /*/ hello */ #symb;
 var x = /a\/*/g; var y = #aSymbol; var z = 2;
 var v = y / z;
-/\//g;
+/\//g; var y = #aSymbol;
 var c; c = #HelloWorld;
 str = "helloWorld";
 str = '#notASymbol';
@@ -30,9 +45,9 @@ str = 123; //ignore #notASymbol ppls
  this is aanother "com #notASymbol  ment" 
 return n&&(r=r+", #"+n.replace(/\s+/g,", #")) 
  */
-</textarea>
+;</textarea>
 
-		<input type="button" name="transpile" value="transpile" onclick="var textScript = document.getElementById('scripts').value;console.time('symbolLiterals');var result = main(textScript);console.timeEnd('symbolLiterals');document.getElementById('results').value=result;console.log('NB: input===output is '+(textScript===result));">
+		<input type="button" name="transpile" value="transpile" onclick="processJavascript();">
 
 		<textarea id="results" rows="20" cols="80"></textarea>
 	</body>

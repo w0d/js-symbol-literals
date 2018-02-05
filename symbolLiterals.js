@@ -9,20 +9,22 @@ var look;
 var EOF = false;
 var CR = "\r";
 var LF = "\n";
-var QUOTES = "\'"+'\"';
+var QUOTES = "'"+'"';
 var STRINGESCAPE = "\\";
-var EOFMaxRead = 1000;
+var EOFMaxRead = 10000;
+var charPosAtStartEmit = 0;
 
 function read(){
   if (streamPos < stream.length) {
     look = stream[streamPos];
     streamPos = streamPos + 1;
-    if (streamPos >= stream.length){
-      EOF = true;
-    }
   } else {
+    EOF = true;
     look = "";
-    if (!EOFMaxRead--) abort("ABORTED: Stuck in loop..");
+    if (!EOFMaxRead--) abort("ABORTED: Stuck in loop.. ");
+  }
+  if (streamPos == 36) {
+    1==1;
   }
 }
 function getChar(){
@@ -30,6 +32,7 @@ function getChar(){
 }
 function error(s){
   console.log("Error@char " + (streamPos-1)+ " : " + s  );
+  setTextareaSelection(charPosAtStartEmit, streamPos);
 }
 function abort(s){ 
   error(s);
@@ -78,7 +81,7 @@ function isEndOfLineOrFile(c){
   return (c == CR) || (c == LF) || EOF;
 }
 function isRegExLiteral(c){ //**NB: just catches the breaking expressions /\/\//g; & /a\/*abc()/gi
-  var isRegExpTell = (streamPos>1) && (STRINGESCAPE == stream[streamPos-2]);  //(streamPos>1) for when script begins with // or /*
+  var isRegExpTell = (streamPos>1) && (STRINGESCAPE == stream[streamPos-2]);
   var isRegExpDoubleSlash = isSingleLineComment(c) && isRegExpTell;
   var isRegExpSlashStar = isMultiLineComment(c) && isRegExpTell;
   return isRegExpDoubleSlash || isRegExpSlashStar;
@@ -90,18 +93,20 @@ function emitAndGetChar(s){
   emit(s);
   getChar();
 }
-function emitRegExLiteral(c){
-//do while not / where / is not preceeded by \ or \\\ or \\\\\ etc          /\//g; or  /a\/*/g;
-  if (isSingleLineComment(c) && (streamPos>1) && (STRINGESCAPE == stream[streamPos-2])){
+function emitRegExLiteral(){    //regex's posing as comments.. do while not / where / is not preceeded by \ or \\\ or \\\\\ etc       or  ;
+  if (isSingleLineComment(look)){    //      /\//g;
+    emitAndGetChar(look); 
     emitAndGetChar(look);
-  } else if (isMultiLineComment(c) && (streamPos>1) && (STRINGESCAPE == stream[streamPos-2])) {
-    while ((look != "/" && STRINGESCAPE != stream[streamPos-1]) || !EOF) {
+  } else if (isMultiLineComment(look)) {    //      /a\/*/g
+    emitAndGetChar(look);
+    while (look != "/" && STRINGESCAPE == stream[streamPos-2] && !EOF) {
       emitAndGetChar(look);
     }
-  } else {
-    console.log('u aint seen me..');
+    emitAndGetChar(look);
   }
-  emitAndGetChar(look);
+  while ("igm".indexOf(look) != -1) {
+    emitAndGetChar(look);
+  }
 }
 function emitSymbolLiteral(){
   match('#');
@@ -121,11 +126,12 @@ function emitStringLiteral(){
     }
     emitAndGetChar(look);
   }
-  if (look != thisStringsTerminator) error("String Literal Error: End of line or file: expecting string terminator");
+  if (look != thisStringsTerminator) abort("String Literal Error: End of line or file: expecting string terminator");
   emitAndGetChar(look);
 }
 function emitMultiLineComment(){
-  while ((look != "/" && "*" != stream[streamPos-1]) || EOF) {
+  emitAndGetChar(look);
+  while (!(look == "/" && "*" == stream[streamPos-2]) && !EOF) {
     emitAndGetChar(look);
   }
   emitAndGetChar(look);
@@ -139,6 +145,8 @@ function emitSingleLineComment(){
 function init(){
   result = "";
   EOF = false;
+  EOFMaxRead = 1000;
+  charPosAtStartEmit = 0;
   getChar();
 }
 function replaceSymbolLiterals(){
@@ -165,9 +173,9 @@ function replaceSymbolLiterals(){
 function main(parseStr){
   stream = parseStr;
   streamPos = 0;
-  EOFMaxRead = 1000;
   init();
   while (!EOF){
+    charPosAtStartEmit = streamPos-1;
     replaceSymbolLiterals();
   }
   return result;
