@@ -23,9 +23,6 @@ function read(){
     look = "";
     if (!EOFMaxRead--) abort("ABORTED: Stuck in loop.. ");
   }
-  if (streamPos == 36) {
-    1==1;
-  }
 }
 function getChar(){
   read();
