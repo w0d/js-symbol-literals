@@ -9,4 +9,4 @@ borrowing from Lingo's symbol literals, you can type instead
 
 calling main(scriptext) will convert all occurances of symbol literals eg #symbolName to valid javascript Symbol.for('symbolName')
 
-currently experimental as needs much testing, particularly of javascript with heavy use of regular expression literals
+currently experimental as needs much testing, currently fails if your javascript uses regular expression literals containing the # character
