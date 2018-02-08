@@ -1,0 +1,89 @@
+/*
+https://jsbench.me/1kjdcvhy9w
+Object symbols global vs local vs propertyNames access
+
+
+currently a work in pogress.. 
+tests premade objects vs post created props&symbs eg objPreMadeProps={abc:1, alongername:2 etc} vs objPostMadeProps={};objPostMadeProps.abc=123;etc
+TODO:test local symbols vs global
+
+
+
+
+*/
+
+//post Object creation property added assembly
+var noOfObjectProperties = 5;
+var testNames = [];
+var postMadeProps = [];
+var postMadeSymbs = [];
+var postMadeSymbsLocal = [];
+var objPostMadeProps = {};
+var objPostMadeSymbs = {};
+var objPostMadeSymbsLocal = {};
+makePropsAndSyms();
+
+//immediate Object construction
+var objPreMadeProps = {'abc':1, 'alongername':2, 'anyname':3, 'areallylongname':4, 'small':5};
+var objPreMadeSymbs = {[Symbol.for('abc')]:1, [Symbol.for('alongername')]:2, [Symbol.for('anyname')]:3, [Symbol.for('areallylongname')]:4, [Symbol.for('small')]:5};
+var objPreMadeSymbsLocal = {[Symbol()]:1, [Symbol()]:2, [Symbol()]:3, [Symbol()]:4, [Symbol()]:5};
+var preMadeProps = Object.getOwnPropertyNames(objPreMadeProps);
+var preMadeSymbs = Object.getOwnPropertySymbols(objPreMadeSymbs);
+var preMadeSymbsLocal = Object.getOwnPropertySymbols(objPreMadeSymbsLocal);
+
+function makePropsAndSyms(){
+  	for (var i = 0; i < noOfObjectProperties; i++) {
+  		//lets make propertynames variable in length 1-16 chars 
+ 		testNames.push(makeString(1+(Math.random()*16)|0));
+	}
+  	var localSymb;
+	for (var j = 0; j < testNames.length; j++) {
+      	localSymb = Symbol();
+ 		objPostMadeProps[testNames[j]] = testNames[j];
+		objPostMadeSymbs[Symbol.for(testNames[j])] = testNames[j];
+      	objPostMadeSymbsLocal[localSymb] = testNames[j];
+		postMadeProps.push(testNames[j]);
+		postMadeSymbs.push(Symbol.for(testNames[j]));
+      	postMadeSymbsLocal.push(localSymb);
+	}
+	function makeString(length){
+		var ret = '';
+		for (var i=0; i<length; i++){
+    		ret+=String.fromCharCode(97+((Math.random()*26)|0));
+    	}
+		return ret;
+	}
+}
+
+
+
+
+//PreMadeObjectAccessViaPropertyName
+for (var k = 0; k < preMadeProps.length; k++) {
+  	objPreMadeProps[preMadeProps[k]]=objPreMadeProps[preMadeProps[k]];
+}
+//PreMadeObjectAccessViaSymbol
+for (var k = 0; k < preMadeSymbs.length; k++) {
+  	objPreMadeSymbs[preMadeSymbs[k]]=objPreMadeSymbs[preMadeSymbs[k]];
+}
+//PostCreatedObjectAccessViaPropertyName
+for (var k = 0; k < postMadeProps.length; k++) {
+  	objPostMadeProps[postMadeProps[k]]=objPostMadeProps[postMadeProps[k]];
+}
+//PostCreatedObjectAccessViaSymbol
+for (var k = 0; k < postMadeSymbs.length; k++) {
+  	objPostMadeSymbs[postMadeSymbs[k]]=objPostMadeSymbs[postMadeSymbs[k]];
+}
+//PreMadeObjectAccessViaSymbolLocal
+for (var k = 0; k < preMadeSymbsLocal.length; k++) {
+  	objPreMadeSymbsLocal[preMadeSymbsLocal[k]]=objPreMadeSymbsLocal[preMadeSymbsLocal[k]];
+}
+//PostCreatedObjectAccessViaSymbolLocal
+for (var k = 0; k < postMadeSymbsLocal.length; k++) {
+  	objPostMadeSymbsLocal[postMadeSymbsLocal[k]]=objPostMadeSymbsLocal[postMadeSymbsLocal[k]];
+}
+//
+
+//
+
+//
