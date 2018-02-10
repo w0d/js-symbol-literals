@@ -4,47 +4,136 @@ Object symbols global vs local vs propertyNames access
 
 
 currently a work in pogress.. 
-tests premade objects vs post created props&symbs eg objPreMadeProps={abc:1, alongername:2 etc} vs objPostMadeProps={};objPostMadeProps.abc=123;etc
-TODO:test local symbols vs global
-
-
-
+tests premade vs post created objects (propteries and symbols added after the Object has been brought into existance)
+property vs global symbols vs local symbols
+ eg objPreMadeProps={abc:1, alongername:2 etc} vs objPostMadeProps={};objPostMadeProps.abc=123;etc
 
 */
 
 //post Object creation property added assembly
-var noOfObjectProperties = 5;
-var testNames = [];
-var postMadeProps = [];
-var postMadeSymbs = [];
-var postMadeSymbsLocal = [];
-var objPostMadeProps = {};
-var objPostMadeSymbs = {};
-var objPostMadeSymbsLocal = {};
-makePropsAndSyms();
+var objPropSize = 5;
+var testNames = ['abc', 'alongername', 'anyname', 'areallylongname', 'small'];
 
-//immediate Object construction
-var objPreMadeProps = {'abc':1, 'alongername':2, 'anyname':3, 'areallylongname':4, 'small':5};
-var objPreMadeSymbs = {[Symbol.for('abc')]:1, [Symbol.for('alongername')]:2, [Symbol.for('anyname')]:3, [Symbol.for('areallylongname')]:4, [Symbol.for('small')]:5};
-var objPreMadeSymbsLocal = {[Symbol()]:1, [Symbol()]:2, [Symbol()]:3, [Symbol()]:4, [Symbol()]:5};
-var preMadeProps = Object.getOwnPropertyNames(objPreMadeProps);
-var preMadeSymbs = Object.getOwnPropertySymbols(objPreMadeSymbs);
-var preMadeSymbsLocal = Object.getOwnPropertySymbols(objPreMadeSymbsLocal);
+var objPostProps = {};//Object.create(null):
+var objPostSymbG = {};
+var objPostSymbL = {};
 
-function makePropsAndSyms(){
-  	for (var i = 0; i < noOfObjectProperties; i++) {
+var postProps = [];
+var postSymbG = [];
+var postSymbL = [];
+
+var objPreProps = {'abc':1, 'alongername':2, 'anyname':3, 'areallylongname':4, 'small':5};
+var objPreSymbG = {[Symbol.for('abc')]:1, [Symbol.for('alongername')]:2, [Symbol.for('anyname')]:3, [Symbol.for('areallylongname')]:4, [Symbol.for('small')]:5};
+var objPreSymbL = {[Symbol()]:1, [Symbol()]:2, [Symbol()]:3, [Symbol()]:4, [Symbol()]:5};
+
+var preProps = Object.getOwnPropertyNames(objPreProps);
+var preSymbG = Object.getOwnPropertySymbols(objPreSymbG);
+var preSymbL = Object.getOwnPropertySymbols(objPreSymbL);
+
+addLatePropsAndSyms();
+
+function addLatePropsAndSyms(){
+  	for (var i = 0; i < objPropSize; i++) {
   		//lets make propertynames variable in length 1-16 chars 
  		testNames.push(makeString(1+(Math.random()*16)|0));
 	}
   	var localSymb;
 	for (var j = 0; j < testNames.length; j++) {
       	localSymb = Symbol();
- 		objPostMadeProps[testNames[j]] = testNames[j];
-		objPostMadeSymbs[Symbol.for(testNames[j])] = testNames[j];
-      	objPostMadeSymbsLocal[localSymb] = testNames[j];
-		postMadeProps.push(testNames[j]);
-		postMadeSymbs.push(Symbol.for(testNames[j]));
-      	postMadeSymbsLocal.push(localSymb);
+ 		objPostProps[testNames[j]] = j;
+		objPostSymbG[Symbol.for(testNames[j])] = j;
+      	objPostSymbL[localSymb] = j;
+		postProps.push(testNames[j]);
+		postSymbG.push(Symbol.for(testNames[j]));
+      	postSymbL.push(localSymb);
+	}
+	function makeString(length){
+		var ret = '';
+		for (var i=0; i<length; i++){
+    		ret+=String.fromCharCode(97+((Math.random()*26)|0));
+    	}
+		return ret;
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//PreMadeObjectAccessViaPropertyName
+for (var k = 0; k < objPropSize; k++) {
+  	objPreProps[preProps[k]]=objPreProps[preProps[k]];
+}
+//PreMadeObjectAccessViaSymbol
+for (var k = 0; k < objPropSize; k++) {
+  	objPreSymbG[preSymbG[k]]=objPreSymbG[preSymbG[k]];
+}
+//PreMadeObjectAccessViaSymbolLocal
+for (var k = 0; k < objPropSize; k++) {
+  	objPreSymbL[preSymbL[k]]=objPreSymbL[preSymbL[k]];
+}
+//PostCreatedObjectAccessViaPropertyName
+for (var k = 0; k < objPropSize; k++) {
+  	objPostProps[postProps[k]]=objPostProps[postProps[k]];
+}
+//PostCreatedObjectAccessViaSymbol
+for (var k = 0; k < objPropSize; k++) {
+  	objPostSymbG[postSymbG[k]]=objPostSymbG[postSymbG[k]];
+}
+//PostCreatedObjectAccessViaSymbolLocal
+for (var k = 0; k < objPropSize; k++) {
+  	objPostSymbL[postSymbL[k]]=objPostSymbL[postSymbL[k]];
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//post Object creation property added assembly
+var objPropSize = 5;
+var testNames = ['abc', 'alongername', 'anyname', 'areallylongname', 'small'];
+
+var gS0 = Symbol.for('abc');
+var gS1 = Symbol.for('alongername');
+var gS2 = Symbol.for('anyname');
+var gS3 = Symbol.for('areallylongname');
+var gS4 = Symbol.for('small');
+
+var lS0 = Symbol();
+var lS1 = Symbol();
+var lS2 = Symbol();
+var lS3 = Symbol();
+var lS4 = Symbol();
+
+var objPostProps = {};//Object.create(null);
+var objPostSymbG = {};//Object.create(null);
+var objPostSymbL = {};//Object.create(null);
+
+var postProps=[];
+var postSymbG=[];
+var postSymbL=[];
+
+var objPreProps = {'abc':1, 'alongername':2, 'anyname':3, 'areallylongname':4, 'small':5};
+var objPreSymbG = {[gS0]:1, [gS1]:2, [gS2]:3, [gS3]:4, [gS4]:5};
+var objPreSymbL = {[Symbol()]:1, [Symbol()]:2, [Symbol()]:3, [Symbol()]:4, [Symbol()]:5};
+
+var preProps = Object.getOwnPropertyNames(objPreProps);
+var preSymbG = Object.getOwnPropertySymbols(objPreSymbG);
+var preSymbL = Object.getOwnPropertySymbols(objPreSymbL);
+
+addLatePropsAndSyms();
+
+function addLatePropsAndSyms(){
+  	for (var i = 0; i < objPropSize; i++) {
+  		//lets make propertynames variable in length 1-16 chars 
+ 		testNames.push(makeString(1+(Math.random()*16)|0));
+	}
+  	var localSymb;
+	for (var j = 0; j < objPropSize; j++) {
+      	localSymb = Symbol();
+ 		objPostProps[testNames[j]] = j;
+		objPostSymbG[Symbol.for(testNames[j])] = j;
+      	objPostSymbL[localSymb] = j;
+		postProps.push(testNames[j]);
+		postSymbG.push(Symbol.for(testNames[j]));
+      	postSymbL.push(localSymb);
 	}
 	function makeString(length){
 		var ret = '';
@@ -56,34 +145,54 @@ function makePropsAndSyms(){
 }
 
 
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 //PreMadeObjectAccessViaPropertyName
-for (var k = 0; k < preMadeProps.length; k++) {
-  	objPreMadeProps[preMadeProps[k]]=objPreMadeProps[preMadeProps[k]];
+for (var k = 0; k < objPropSize; k++) {
+  	objPreProps[preProps[k]]=objPreProps[preProps[k]];
 }
-//PreMadeObjectAccessViaSymbol
-for (var k = 0; k < preMadeSymbs.length; k++) {
-  	objPreMadeSymbs[preMadeSymbs[k]]=objPreMadeSymbs[preMadeSymbs[k]];
-}
-//PostCreatedObjectAccessViaPropertyName
-for (var k = 0; k < postMadeProps.length; k++) {
-  	objPostMadeProps[postMadeProps[k]]=objPostMadeProps[postMadeProps[k]];
-}
-//PostCreatedObjectAccessViaSymbol
-for (var k = 0; k < postMadeSymbs.length; k++) {
-  	objPostMadeSymbs[postMadeSymbs[k]]=objPostMadeSymbs[postMadeSymbs[k]];
+//PreMadeObjectAccessViaSymbolGlobal
+for (var k = 0; k < objPropSize; k++) {
+  	objPreSymbG[preSymbG[k]]=objPreSymbG[preSymbG[k]];
 }
 //PreMadeObjectAccessViaSymbolLocal
-for (var k = 0; k < preMadeSymbsLocal.length; k++) {
-  	objPreMadeSymbsLocal[preMadeSymbsLocal[k]]=objPreMadeSymbsLocal[preMadeSymbsLocal[k]];
+for (var k = 0; k < objPropSize; k++) {
+  	objPreSymbL[preSymbL[k]]=objPreSymbL[preSymbL[k]];
+}
+//PostCreatedObjectAccessViaPropertyName
+for (var k = 0; k < objPropSize; k++) {
+  	objPostProps[postProps[k]]=objPostProps[postProps[k]];
+}
+//PostCreatedObjectAccessViaSymbolGlobal
+for (var k = 0; k < objPropSize; k++) {
+  	objPostSymbG[postSymbG[k]]=objPostSymbG[postSymbG[k]];
 }
 //PostCreatedObjectAccessViaSymbolLocal
-for (var k = 0; k < postMadeSymbsLocal.length; k++) {
-  	objPostMadeSymbsLocal[postMadeSymbsLocal[k]]=objPostMadeSymbsLocal[postMadeSymbsLocal[k]];
+for (var k = 0; k < objPropSize; k++) {
+  	objPostSymbL[postSymbL[k]]=objPostSymbL[postSymbL[k]];
 }
-//
+//InLineObjectPropertyName
+var tmp = objPreProps.abc;
+objPreProps.abc = objPreProps.alongername;
+objPreProps.alongername = objPreProps.anyname;
+objPreProps.anyname = objPreProps.areallylongname;
+objPreProps.areallylongname = objPreProps.small;
+objPreProps.small = objPreProps.tmp;
 
-//
+//LineObjectPrePropertySymbolGlobal
+objPreSymbG[gS0] = objPreSymbG[gS0];
+objPreSymbG[gS1] = objPreSymbG[gS1];
+objPreSymbG[gS2] = objPreSymbG[gS2];
+objPreSymbG[gS3] = objPreSymbG[gS3];
+objPreSymbG[gS4] = objPreSymbG[gS4];
 
-//
+//InLineObjectPostPropertySymbolGlobal
+objPostSymbG[gS0] = objPostSymbG[gS0];
+objPostSymbG[gS1] = objPostSymbG[gS1];
+objPostSymbG[gS2] = objPostSymbG[gS2];
+objPostSymbG[gS3] = objPostSymbG[gS3];
+objPostSymbG[gS4] = objPostSymbG[gS4];
+
+
+
+
+
