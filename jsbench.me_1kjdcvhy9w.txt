@@ -1,12 +1,10 @@
 /*
 https://jsbench.me/1kjdcvhy9w
-Object symbols global vs local vs propertyNames access
+propertyNames vs global symbols vs local symbols
 
 
-currently a work in pogress.. 
-tests premade vs post created objects (propteries and symbols added after the Object has been brought into existance)
-property vs global symbols vs local symbols
- eg objPreMadeProps={abc:1, alongername:2 etc} vs objPostMadeProps={};objPostMadeProps.abc=123;etc
+also compares premade vs post created properties (name and symbols added after the object has been brought into existance)
+ eg objPreProps={abc:1} vs objPostProps={};objPostProps.abc=123;
 
 */
 
@@ -191,6 +189,20 @@ objPostSymbG[gS1] = objPostSymbG[gS1];
 objPostSymbG[gS2] = objPostSymbG[gS2];
 objPostSymbG[gS3] = objPostSymbG[gS3];
 objPostSymbG[gS4] = objPostSymbG[gS4];
+
+//LineObjectPrePropertySymbolLocal
+objPreSymbG[lS0] = objPreSymbG[lS0];
+objPreSymbG[lS0] = objPreSymbG[lS0];
+objPreSymbG[lS0] = objPreSymbG[lS0];
+objPreSymbG[lS0] = objPreSymbG[lS0];
+objPreSymbG[lS0] = objPreSymbG[lS0];
+
+//InLineObjectPostPropertySymbolLocal
+objPostSymbG[lS0] = objPostSymbG[lS0];
+objPostSymbG[lS0] = objPostSymbG[lS0];
+objPostSymbG[lS0] = objPostSymbG[lS0];
+objPostSymbG[lS0] = objPostSymbG[lS0];
+objPostSymbG[lS0] = objPostSymbG[lS0];
 
 
 
