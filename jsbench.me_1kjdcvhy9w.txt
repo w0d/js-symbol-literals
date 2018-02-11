@@ -9,7 +9,7 @@ also compares premade vs post created properties (name and symbols added after t
 */
 
 //post Object creation property added assembly
-var objPropSize = 5;
+var objMaxProps = 5;
 var testNames = ['abc', 'alongername', 'anyname', 'areallylongname', 'small'];
 
 var objPostProps = {};//Object.create(null):
@@ -31,7 +31,7 @@ var preSymbL = Object.getOwnPropertySymbols(objPreSymbL);
 addLatePropsAndSyms();
 
 function addLatePropsAndSyms(){
-  	for (var i = 0; i < objPropSize; i++) {
+  	for (var i = 0; i < objMaxProps; i++) {
   		//lets make propertynames variable in length 1-16 chars 
  		testNames.push(makeString(1+(Math.random()*16)|0));
 	}
@@ -56,27 +56,27 @@ function addLatePropsAndSyms(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //PreMadeObjectAccessViaPropertyName
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPreProps[preProps[k]]=objPreProps[preProps[k]];
 }
 //PreMadeObjectAccessViaSymbol
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPreSymbG[preSymbG[k]]=objPreSymbG[preSymbG[k]];
 }
 //PreMadeObjectAccessViaSymbolLocal
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPreSymbL[preSymbL[k]]=objPreSymbL[preSymbL[k]];
 }
 //PostCreatedObjectAccessViaPropertyName
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPostProps[postProps[k]]=objPostProps[postProps[k]];
 }
 //PostCreatedObjectAccessViaSymbol
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPostSymbG[postSymbG[k]]=objPostSymbG[postSymbG[k]];
 }
 //PostCreatedObjectAccessViaSymbolLocal
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPostSymbL[postSymbL[k]]=objPostSymbL[postSymbL[k]];
 }
 
@@ -85,7 +85,7 @@ for (var k = 0; k < objPropSize; k++) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //post Object creation property added assembly
-var objPropSize = 5;
+var objMaxProps = 5;
 var testNames = ['abc', 'alongername', 'anyname', 'areallylongname', 'small'];
 
 var gS0 = Symbol.for('abc');
@@ -119,12 +119,12 @@ var preSymbL = Object.getOwnPropertySymbols(objPreSymbL);
 addLatePropsAndSyms();
 
 function addLatePropsAndSyms(){
-  	for (var i = 0; i < objPropSize; i++) {
+  	for (var i = 0; i < objMaxProps; i++) {
   		//lets make propertynames variable in length 1-16 chars 
  		testNames.push(makeString(1+(Math.random()*16)|0));
 	}
   	var localSymb;
-	for (var j = 0; j < objPropSize; j++) {
+	for (var j = 0; j < objMaxProps; j++) {
       	localSymb = Symbol();
  		objPostProps[testNames[j]] = j;
 		objPostSymbG[Symbol.for(testNames[j])] = j;
@@ -145,27 +145,27 @@ function addLatePropsAndSyms(){
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //PreMadeObjectAccessViaPropertyName
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPreProps[preProps[k]]=objPreProps[preProps[k]];
 }
 //PreMadeObjectAccessViaSymbolGlobal
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPreSymbG[preSymbG[k]]=objPreSymbG[preSymbG[k]];
 }
 //PreMadeObjectAccessViaSymbolLocal
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPreSymbL[preSymbL[k]]=objPreSymbL[preSymbL[k]];
 }
 //PostCreatedObjectAccessViaPropertyName
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPostProps[postProps[k]]=objPostProps[postProps[k]];
 }
 //PostCreatedObjectAccessViaSymbolGlobal
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPostSymbG[postSymbG[k]]=objPostSymbG[postSymbG[k]];
 }
 //PostCreatedObjectAccessViaSymbolLocal
-for (var k = 0; k < objPropSize; k++) {
+for (var k = 0; k < objMaxProps; k++) {
   	objPostSymbL[postSymbL[k]]=objPostSymbL[postSymbL[k]];
 }
 //InLineObjectPropertyName
